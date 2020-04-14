@@ -37,7 +37,5 @@ BEGIN
       THEN
         Sum := Sum + Digit;
     END; 
-  IF Sum <> -1
-  THEN
-    WRITELN(Sum)      
+  WRITELN(Sum)      
 END.          
