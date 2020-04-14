@@ -3,9 +3,6 @@ VAR
   Number: INTEGER;
 
 PROCEDURE ReadDigit(VAR FileFrom: TEXT; VAR Digit: INTEGER);
-{—читывает текущий символ из файла, если он - цифра, возвращает его 
-преобразу€ в значение типа INTEGER. ≈сли считанный символ не цифра
-возвращает -1}
 VAR    
   Ch: CHAR;
 BEGIN
@@ -24,7 +21,6 @@ BEGIN
       IF (Ch = '7') THEN Digit := 7 ELSE
       IF (Ch = '8') THEN Digit := 8 ELSE
       IF (Ch = '9') THEN Digit := 9 ELSE
-      Digit := -1
     END  
 END;  
   
@@ -47,6 +43,7 @@ BEGIN
         Number := -1 
     END;    
 END; 
+
 BEGIN
   ReadNumber(INPUT, Number);
   WRITELN(Number) 
