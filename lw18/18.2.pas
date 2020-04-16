@@ -10,7 +10,7 @@ VAR
   NextScore: Score;
   Ave, TotalScore, ClassTotal: INTEGER;
   Overflow: BOOLEAN;
-  TempFile: TEXT;
+  StudentNameFile: TEXT;
 PROCEDURE Copy(VAR FileFrom, FileIn: TEXT);
 VAR 
   Ch: CHAR;
@@ -30,8 +30,8 @@ BEGIN {AverageScore}
   WHILE Student <= ClassSize
   DO 
     BEGIN
-      REWRITE(TempFile);
-      Copy(INPUT, TempFile);
+      REWRITE(StudentNameFile);
+      Copy(INPUT, StudentNameFile);
       TotalScore := 0;
       WhichScore := 1;      
       WHILE WhichScore <= NumberOfScores 
@@ -49,8 +49,8 @@ BEGIN {AverageScore}
             WRITELN('Неверные данные. Введите оценки студента еще раз')    
         END;
       READLN;
-      RESET(TempFile);
-      Copy(TempFile, OUTPUT);
+      RESET(StudentNameFile);
+      Copy(StudentNameFile, OUTPUT);
       TotalScore := TotalScore * 10;
       Ave := TotalScore DIV NumberOfScores;
       IF Ave MOD 10 >= 5
