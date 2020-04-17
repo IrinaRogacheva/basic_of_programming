@@ -20,7 +20,7 @@ BEGIN
       IF (Ch = '6') THEN Digit := 6 ELSE
       IF (Ch = '7') THEN Digit := 7 ELSE
       IF (Ch = '8') THEN Digit := 8 ELSE
-      IF (Ch = '9') THEN Digit := 9 ELSE
+      IF (Ch = '9') THEN Digit := 9
     END  
 END;  
   
@@ -36,7 +36,7 @@ BEGIN
       IF ((MAXINT DIV 10) > Number) OR (((MAXINT DIV 10) = Number) AND ((MAXINT MOD 10) >= Digit))
       THEN
         BEGIN
-          Number := Number*10 + Digit;
+          Number := Number * 10 + Digit;
           ReadDigit(FileFrom, Digit)
         END  
       ELSE
@@ -54,7 +54,7 @@ BEGIN
       Min := Number;
       Max := Number;
       Overflow := FALSE;          
-      WHILE NOT EOLN(INPUT) AND (NOT Overflow)
+      WHILE (NOT EOLN(INPUT)) AND (NOT Overflow)
       DO
         BEGIN
           ReadNumber(INPUT, Number);
@@ -77,7 +77,6 @@ BEGIN
       FractPart := (Sum MOD Quantity) * 100 DIV Quantity;
       WRITELN('Min is ', Min);
       WRITELN('Max is ', Max);
-      WRITELN('Average is ', Average, '.', FractPart);  
+      WRITELN('Average is ', Average, '.', FractPart)  
     END              
-END.       
-              
+END.               
