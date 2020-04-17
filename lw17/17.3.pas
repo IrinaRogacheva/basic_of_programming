@@ -54,7 +54,7 @@ BEGIN
       Min := Number;
       Max := Number;
       Overflow := FALSE;          
-      WHILE (NOT EOLN(INPUT)) AND (NOT Overflow)
+      WHILE NOT EOLN(INPUT) AND NOT Overflow
       DO
         BEGIN
           ReadNumber(INPUT, Number);
