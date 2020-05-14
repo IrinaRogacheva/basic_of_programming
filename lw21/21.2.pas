@@ -3,6 +3,7 @@ PROGRAM Encryption(INPUT, OUTPUT);
   и печатает новые символы в файл}
 CONST
   Len = 20;
+  Alphabet = 26;
 TYPE
   Str = ARRAY [1 .. Len] OF 'A' .. 'Z';
   Chiper = ARRAY ['A' .. 'Z'] OF CHAR;
@@ -10,9 +11,10 @@ VAR
   Msg: Str;
   Code: Chiper;
   I: INTEGER;
-  K: CHAR;
+  K, Ch: CHAR;
   Length: 1 .. Len;
   ChiperFile, ChiperText: TEXT;
+  Error: BOOLEAN;
  
 PROCEDURE Encode(VAR S: Str; VAR FileIn: TEXT);
 {Выводит символы из Code, соответствующие символам из S}
@@ -27,7 +29,7 @@ BEGIN {Encode}
     ELSE
       IF S[Index] = ' '
       THEN
-        WRITE(FileIn, 'G')
+        WRITE(FileIn, '!')
       ELSE
         WRITE(FileIn, S[Index]);
   WRITELN(FileIn)
@@ -36,13 +38,33 @@ END;  {Encode}
 BEGIN {Encryption}
   ASSIGN(ChiperFile, 'CHIPER.TXT'); 
   RESET(ChiperFile);
-  FOR K := 'A' TO 'Z'
+  I := 0;
+  WHILE NOT EOLN(ChiperFile) AND (NOT Error)
   DO
-    READ(ChiperFile, Code[K]);
-  WHILE NOT EOLN
-  DO
+    BEGIN 
+      I := I + 1; 
+      Length := I;
+      READ(ChiperFile, Ch);
+      IF NOT (Ch IN ['A' .. 'Z'])
+      THEN
+        BEGIN
+          Error := TRUE;
+          WRITELN('Ошибка в файле шифра: он может содержать только буквы')
+        END  
+    END; 
+  IF Length <> Alphabet
+  THEN
     BEGIN
-      {читать строку в Msg}
+      Error := TRUE;
+      WRITELN('Ошибка в файле шифра: количество символов не совпадает с алфавитом')
+    END;     
+  IF NOT Error
+  THEN
+    BEGIN 
+      RESET(ChiperFile);     
+      FOR K := 'A' TO 'Z'
+      DO
+        READ(ChiperFile, Code[K]);
       I := 0;  
       WHILE NOT EOLN AND (I < Len)
       DO
@@ -50,7 +72,7 @@ BEGIN {Encryption}
           I := I + 1; 
           Length := I;
           READ(Msg[I]);
-        END;  
+        END;    
       ASSIGN(ChiperText, 'CHIPERTEXT.TXT'); 
       REWRITE(ChiperText);       
       {распечатать кодированное сообщение}
