@@ -42,24 +42,15 @@ BEGIN
   FOR I := Min TO Max
   DO
     BEGIN
-      IF I IN Symbole  
+      IF I IN Symbole
       THEN
-        BEGIN 
-          IF I MOD 5 = 0
-          THEN
-            WRITELN('X')
-          ELSE
-            WRITE('X')
-        END    
+        WRITE('X')
       ELSE
-        BEGIN 
-          IF I MOD 5 = 0
-          THEN
-            WRITELN(' ')
-          ELSE
-            WRITE(' ')
-        END 
-    END             
+        WRITE(' ');
+      IF I MOD 5 = 0
+      THEN
+        WRITELN
+    END
 END;
 
 BEGIN
