@@ -5,12 +5,12 @@ CONST
   Len = 20;
 TYPE
   Str = ARRAY [1 .. Len] OF 'A' .. 'Z';
-  Chiper = ARRAY ['A' .. 'Z'] OF CHAR;
+  Chiper = ARRAY [' ' .. 'Z'] OF CHAR;
 VAR
   Msg: Str;
   Code: Chiper;
   I: INTEGER;
-  Length: 1 .. Len;
+  Length: 0 .. Len;
  
 PROCEDURE Initialize(VAR Code: Chiper);
 {Присвоить Code шифр замены}
@@ -41,24 +41,21 @@ BEGIN {Initialize}
   Code['X'] := 'C';
   Code['Y'] := 'B';
   Code['Z'] := 'A';
+  Code[' '] := 'G';
 END;  {Initialize}
  
-PROCEDURE Encode(VAR S: Str);
+PROCEDURE Encode(VAR S: Str; Length: INTEGER);
 {Выводит символы из Code, соответствующие символам из S}
 VAR
   Index: 1 .. Len;
 BEGIN {Encode}
   FOR Index := 1 TO Length
   DO
-    IF S[Index] IN ['A' .. 'Z']
+    IF S[Index] IN [' ' .. 'Z']
     THEN
       WRITE(Code[S[Index]])
     ELSE
-      IF S[Index] = ' '
-      THEN
-        WRITE('G')
-      ELSE
-        WRITE(S[Index]);
+      WRITE(S[Index]);
   WRITELN
 END;  {Encode}
  
@@ -81,6 +78,6 @@ BEGIN {Encryption}
       READLN;
       WRITELN;         
       {распечатать кодированное сообщение}
-      Encode(Msg)
+      Encode(Msg, Length)
     END
 END.  {Encryption}
