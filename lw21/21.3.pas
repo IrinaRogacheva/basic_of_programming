@@ -8,7 +8,6 @@ CONST
 TYPE
   Str = ARRAY [1 .. Len] OF ' ' .. 'Z';
   Chiper = ARRAY [' ' .. 'Z'] OF CHAR;
-  SetOfChar = SET OF CHAR;
 VAR
   Msg: Str;
   Decode: Chiper;
@@ -16,7 +15,7 @@ VAR
   ChDecode, EncodedSymbole: CHAR;
   Length: 1 .. Len;
   ChiperFile, EncodedText: TEXT;
-  CodesOfSymbols: SetOfChar;
+  CodesOfSymbols: SET OF CHAR;
  
 FUNCTION ErrorMessage(VAR ChiperFile: TEXT): STRING;
 VAR
