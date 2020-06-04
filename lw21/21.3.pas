@@ -1,61 +1,108 @@
-PROGRAM Decryption(INPUT, OUTPUT);
-{Переводит зашифрованные символы из файла в код согласно Dehiper 
-  и печатает исходные символы в OUTPUT}
+PROGRAM Encryption(INPUT, OUTPUT);
+{Переводит символы из INPUT в код согласно Chiper, взятому из файла 
+  и печатает новые символы в файл}
 CONST
   Len = 20;
+  Alphabet = 26 + 1;
+  EncodedSymbols = [' ', 'A' .. 'Z'];
 TYPE
-  Str = ARRAY [1 .. Len] OF CHAR;
-  Chiper = ARRAY ['A' .. 'Z'] OF CHAR;
+  Str = ARRAY [1 .. Len] OF ' ' .. 'Z';
+  Chiper = ARRAY [' ' .. 'Z'] OF CHAR;
+  SetOfChar = SET OF CHAR;
 VAR
   Msg: Str;
   Decode: Chiper;
   I: INTEGER;
-  K: CHAR;
+  ChDecode, EncodedSymbole: CHAR;
   Length: 1 .. Len;
-  DechiperFile, ChiperText: TEXT;
+  ChiperFile, EncodedText: TEXT;
+  CodesOfSymbols: SetOfChar;
  
-PROCEDURE Decoding(VAR S: Str);
-{Выводит символы из Decode, соответствующие символам из S}
+FUNCTION ErrorMessage(VAR ChiperFile: TEXT): STRING;
+VAR
+  Ch: CHAR;
+  Count: INTEGER;
+BEGIN  
+  ErrorMessage := '';
+  Count := 0;
+  RESET(ChiperFile);
+  WHILE NOT EOF(ChiperFile)
+  DO
+    BEGIN
+      READ(ChiperFile, Ch);
+      IF (Ch IN EncodedSymbols)
+      THEN 
+        BEGIN
+          IF (NOT EOLN(ChiperFile))
+          THEN
+            BEGIN 
+              READ(ChiperFile, Ch);
+              Count := Count + 1
+            END
+          ELSE 
+            ErrorMessage := 'Ошибка: в файле шифра код указан не для всех символов'
+        END    
+      ELSE
+        ErrorMessage := 'Ошибка: в файле шифра есть лишние символы';
+      READLN(ChiperFile)  
+    END;
+  IF Count <> Alphabet
+  THEN
+    ErrorMessage := 'Ошибка: проверьте файл шифра на количество закодированных символов'                    
+END;
+
+PROCEDURE InitializeDecode(VAR Decode: Chiper; VAR ChiperFile: TEXT);
+VAR
+  I: INTEGER;
+{Присвоить Code шифр замены}
+BEGIN {Initialize} 
+  RESET(ChiperFile);
+  I := 0;
+  WHILE (NOT EOF(ChiperFile))
+  DO
+    BEGIN
+      READ(ChiperFile, EncodedSymbole);
+      READ(ChiperFile, ChDecode);          
+      Decode[ChDecode] := EncodedSymbole;
+      CodesOfSymbols := CodesOfSymbols + [ChDecode];
+      READLN(ChiperFile)
+    END;       
+END;  {Initialize} 
+ 
+PROCEDURE Encode(VAR S: Str; Length: INTEGER);
+{Выводит символы из Code, соответствующие символам из S}
 VAR
   Index: 1 .. Len;
 BEGIN {Encode}
   FOR Index := 1 TO Length
-  DO 
-    IF S[Index] IN ['A' .. 'Z']
+  DO
+    IF S[Index] IN CodesOfSymbols
     THEN
       WRITE(Decode[S[Index]])
     ELSE
-      IF S[Index] = '!'
-      THEN
-        WRITE(' ')
-      ELSE
-        WRITE(S[Index]);      
+      WRITE(S[Index]);
   WRITELN
-END;  {Decoding}
+END;  {Encode}
  
-BEGIN {Decryption}
-  ASSIGN(DechiperFile, 'DECHIPER.TXT'); 
-  RESET(DechiperFile);
-  FOR K := 'A' TO 'Z'
-  DO
-    READ(DechiperFile, Decode[K]);
-  ASSIGN(ChiperText, 'CHIPERTEXT.TXT'); 
-  RESET(ChiperText);  
-  WHILE NOT EOLN(ChiperText)
-  DO
+BEGIN {Encryption}
+  {Инициализировать Code}
+  ASSIGN(ChiperFile, 'Chiper.txt');
+  IF ErrorMessage(ChiperFile) = ''
+  THEN
     BEGIN
-      {читать строку в Msg и распечатать ее}
-      I := 0;  
-      WHILE NOT EOLN(ChiperText) AND (I < Len)
+      CodesOfSymbols := [];
+      InitializeDecode(Decode, ChiperFile);
+      ASSIGN(EncodedText, 'ChiperText.txt');  
+      RESET(EncodedText);
+      WHILE NOT EOLN(EncodedText) AND (I < Len)
       DO
         BEGIN
           I := I + 1; 
           Length := I;
-          READ(ChiperText, Msg[I]);
-          WRITE(Msg[I])
-        END;  
-      WRITELN;        
-      {распечатать кодированное сообщение}
-      Decoding(Msg)
-    END; 
+          READ(EncodedText, Msg[I])
+        END;   
+      Encode(Msg, Length)
+    END 
+  ELSE
+    WRITELN(ErrorMessage(ChiperFile))  
 END.  {Encryption}
