@@ -4,7 +4,7 @@ PROGRAM Encryption(INPUT, OUTPUT);
 CONST
   Len = 20;
   Alphabet = 26 + 1;
-  ChiperSymbols = [' ', 'A' .. 'Z'];
+  EncodedSymbols = [' ', 'A' .. 'Z'];
 TYPE
   Str = ARRAY [1 .. Len] OF 'A' .. 'Z';
   Chiper = ARRAY [' ' .. 'Z'] OF CHAR;
@@ -17,32 +17,50 @@ VAR
   ChiperFile, ChiperText: TEXT;
   Error: BOOLEAN;
  
-PROCEDURE Initialize(VAR Code: Chiper; VAR Error: BOOLEAN; VAR ChiperFile: TEXT);
+FUNCTION ErrorMessage(VAR ChiperFile: TEXT): STRING;
 VAR
-  I: INTEGER;
+  Ch: CHAR;
+  Count: INTEGER;
+BEGIN  
+  ErrorMessage := '';
+  Count := 0;
+  RESET(ChiperFile);
+  WHILE NOT EOF(ChiperFile)
+  DO
+    BEGIN
+      READ(ChiperFile, Ch);
+      IF (Ch IN EncodedSymbols)
+      THEN 
+        BEGIN
+          IF (NOT EOLN(ChiperFile))
+          THEN
+            BEGIN 
+              READ(ChiperFile, Ch);
+              Count := Count + 1
+            END
+          ELSE 
+            ErrorMessage := 'Ошибка: в файле шифра код указан не для всех символов'
+        END    
+      ELSE
+        ErrorMessage := 'Ошибка: в файле шифра есть лишние символы';
+      READLN(ChiperFile)  
+    END;
+  IF Count <> Alphabet
+  THEN
+    ErrorMessage := 'Ошибка: проверьте файл шифра на количество закодированных символов'                    
+END; 
+ 
+PROCEDURE Initialize(VAR Code: Chiper; VAR ChiperFile: TEXT);
 {Присвоить Code шифр замены}
 BEGIN {Initialize} 
   RESET(ChiperFile);
-  I := 0;
-  Error := FALSE;
   WHILE (NOT EOF(ChiperFile))
   DO
     BEGIN
       READ(ChiperFile, Ch);
-      IF (Ch IN ChiperSymbols) AND (NOT EOLN(ChiperFile)) 
-      THEN
-        BEGIN
-          READ(ChiperFile, Code[Ch]);
-          I := I + 1;
-        END;
+      READ(ChiperFile, Code[Ch]);
       READLN(ChiperFile)
-    END;
-  IF I < Alphabet
-  THEN
-    BEGIN
-      Error := TRUE; 
-      WRITELN('Ошибка в файле шифров: не все символы могут быть зашифрованы')
-    END           
+    END          
 END;  {Initialize} 
  
 PROCEDURE Encode(VAR S: Str; VAR FileIn: TEXT; Length: INTEGER);
@@ -53,7 +71,7 @@ BEGIN {Encode}
   REWRITE(FileIn);
   FOR Index := 1 TO Length
   DO
-    IF S[Index] IN ChiperSymbols
+    IF S[Index] IN EncodedSymbols
     THEN
       WRITE(FileIn, Code[S[Index]])
     ELSE
@@ -63,11 +81,11 @@ END;  {Encode}
  
 BEGIN {Encryption}
   {Инициализировать Code}
-  ASSIGN(ChiperFile, 'Chiper.txt');
-  Initialize(Code, Error, ChiperFile);
-  IF NOT Error
+  ASSIGN(ChiperFile, 'Chiper.txt');  
+  IF ErrorMessage(ChiperFile) = ''
   THEN
-    BEGIN
+    BEGIN  
+      Initialize(Code, ChiperFile);
       WHILE NOT EOLN AND (I < Len)
       DO
         BEGIN
@@ -78,5 +96,7 @@ BEGIN {Encryption}
       READLN;     
       ASSIGN(ChiperText, 'ChiperText.txt');   
       Encode(Msg, ChiperText, Length)
-    END 
+    END
+  ELSE
+    WRITELN(ErrorMessage(ChiperFile))     
 END.  {Encryption}
