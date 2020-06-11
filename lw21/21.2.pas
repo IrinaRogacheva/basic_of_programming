@@ -1,6 +1,6 @@
 PROGRAM Encryption(INPUT, OUTPUT);
-{Переводит символы из INPUT в код согласно Chiper, взятому из файла 
-  и печатает новые символы в файл}
+{РџРµСЂРµРІРѕРґРёС‚ СЃРёРјРІРѕР»С‹ РёР· INPUT РІ РєРѕРґ СЃРѕРіР»Р°СЃРЅРѕ Chiper
+  Рё РїРµС‡Р°С‚Р°РµС‚ РЅРѕРІС‹Рµ СЃРёРјРІРѕР»С‹ РІ OUTPUT}
 CONST
   Len = 20;
   Alphabet = 26 + 1;
@@ -17,15 +17,14 @@ VAR
   ChiperFile, ChiperText: TEXT;
   Error: BOOLEAN;
  
-FUNCTION ErrorMessage(VAR ChiperFile: TEXT): STRING;
+PROCEDURE Initialize(VAR Code: Chiper; VAR ChiperFile: TEXT; VAR Error: BOOLEAN);
+{РџСЂРёСЃРІРѕРёС‚СЊ Code С€РёС„СЂ Р·Р°РјРµРЅС‹}
 VAR
-  Ch: CHAR;
   Count: INTEGER;
-BEGIN  
-  ErrorMessage := '';
+BEGIN {Initialize}
+  RESET(ChiperFile); 
   Count := 0;
-  RESET(ChiperFile);
-  WHILE NOT EOF(ChiperFile)
+  WHILE NOT EOF(ChiperFile) AND NOT Error
   DO
     BEGIN
       READ(ChiperFile, Ch);
@@ -35,36 +34,23 @@ BEGIN
           IF (NOT EOLN(ChiperFile))
           THEN
             BEGIN 
-              READ(ChiperFile, Ch);
+              READ(ChiperFile, Code[Ch]);
               Count := Count + 1
             END
           ELSE 
-            ErrorMessage := 'Ошибка: в файле шифра код указан не для всех символов'
+            Error := TRUE;
         END    
       ELSE
-        ErrorMessage := 'Ошибка: в файле шифра есть лишние символы';
+        Error := TRUE;
       READLN(ChiperFile)  
     END;
   IF Count <> Alphabet
   THEN
-    ErrorMessage := 'Ошибка: проверьте файл шифра на количество закодированных символов'                    
-END; 
- 
-PROCEDURE Initialize(VAR Code: Chiper; VAR ChiperFile: TEXT);
-{Присвоить Code шифр замены}
-BEGIN {Initialize} 
-  RESET(ChiperFile);
-  WHILE (NOT EOF(ChiperFile))
-  DO
-    BEGIN
-      READ(ChiperFile, Ch);
-      READ(ChiperFile, Code[Ch]);
-      READLN(ChiperFile)
-    END          
+    Error := TRUE;       
 END;  {Initialize} 
  
 PROCEDURE Encode(VAR S: Str; VAR FileIn: TEXT; Length: INTEGER);
-{Выводит символы из Code, соответствующие символам из S}
+{Р’С‹РІРѕРґРёС‚ СЃРёРјРІРѕР»С‹ РёР· Code, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёРµ СЃРёРјРІРѕР»Р°Рј РёР· S}
 VAR
   Index: 1 .. Len;
 BEGIN {Encode}
@@ -80,12 +66,13 @@ BEGIN {Encode}
 END;  {Encode}
  
 BEGIN {Encryption}
-  {Инициализировать Code}
+  {РРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ Code}
   ASSIGN(ChiperFile, 'Chiper.txt');  
-  IF ErrorMessage(ChiperFile) = ''
-  THEN
-    BEGIN  
-      Initialize(Code, ChiperFile);
+  Error := FALSE;
+  Initialize(Code, ChiperFile, Error);
+  IF NOT Error
+  THEN 
+    BEGIN
       WHILE NOT EOLN AND (I < Len)
       DO
         BEGIN
@@ -98,5 +85,5 @@ BEGIN {Encryption}
       Encode(Msg, ChiperText, Length)
     END
   ELSE
-    WRITELN(ErrorMessage(ChiperFile))     
+    WRITELN('РџСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ С€РёС„СЂР°')
 END.  {Encryption}
