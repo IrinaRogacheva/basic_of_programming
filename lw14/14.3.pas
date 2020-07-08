@@ -3,17 +3,17 @@ VAR
   F1, F2, F3: TEXT;
   Ch: CHAR;
 
-PROCEDURE Copy(VAR Source, Result: TEXT);
+PROCEDURE Copy(VAR FileIn, FileOut: TEXT);
 VAR
   Ch: CHAR;
 BEGIN {FileIO}
-  RESET(Source);
-  REWRITE(Result);
-  WHILE NOT EOLN(Source)
+  RESET(FileIn);
+  REWRITE(FileOut);
+  WHILE NOT EOLN(FileIn)
   DO
     BEGIN
-      READ(Source, Ch);
-      WRITE(Result, Ch)
+      READ(FileIn, Ch);
+      WRITE(FileOut, Ch)
     END;
 END; {FileIO}
 
