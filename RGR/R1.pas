@@ -32,6 +32,8 @@ END; {GetStatistics}
 BEGIN {CountWords}
   ASSIGN(FileIn, 'FileInForStatistics.txt');
   ASSIGN(FileOut, 'FileOutForStatistics.txt');
-  GetStatistics(FileIn, FileOut);  
+  GetStatistics(FileIn, FileOut); 
+  CLOSE(FileIn);
+  CLOSE(FileOut); 
   WRITELN(FileOut)
 END. {CountWords}  
