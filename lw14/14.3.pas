@@ -3,7 +3,7 @@ VAR
   F1, F2, F3: TEXT;
   Ch: CHAR;
 
-PROCEDURE FileIO(VAR Source, Result: TEXT);
+PROCEDURE Copy(VAR Source, Result: TEXT);
 VAR
   Ch: CHAR;
 BEGIN {FileIO}
@@ -111,7 +111,7 @@ BEGIN {RecursiveSort}
 END; {RecursiveSort}
 
 BEGIN {RecursiveFileSort}
-  FileIO(INPUT, F1);
+  Copy(INPUT, F1);
   RecursiveSort(F1);
-  FileIO(F1, OUTPUT);
+  Copy(F1, OUTPUT);
 END. {RecursiveFileSort}
