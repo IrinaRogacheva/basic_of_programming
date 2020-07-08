@@ -26,14 +26,14 @@ BEGIN {GetStatistics}
     END;
   REWRITE(FileOut);  
   CopyContainer(FileOut, Root);
-  ClearContainer(Root);  
+  ClearContainer(Root); 
+  CLOSE(FileIn);
+  CLOSE(FileOut);  
 END; {GetStatistics} 
   
 BEGIN {CountWords}
   ASSIGN(FileIn, 'FileInForStatistics.txt');
   ASSIGN(FileOut, 'FileOutForStatistics.txt');
   GetStatistics(FileIn, FileOut); 
-  CLOSE(FileIn);
-  CLOSE(FileOut); 
   WRITELN(FileOut)
 END. {CountWords}  
