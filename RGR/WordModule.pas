@@ -2,20 +2,18 @@ UNIT WordModule;
 INTERFACE
   CONST
     MaxLengthOfWord = 50;
-    AlphabetEn = ['A' .. 'Z', 'a' .. 'z'];
-    AlphabetRu = ['À' .. 'ß', 'à' .. 'ÿ'];
+    OrdDifference = 32;
+    Alphabet = ['A' .. 'Z', 'a' .. 'z', 'À' .. 'ß', 'à' .. 'ÿ'];
+    AlphabetUpperCase = ['À' .. 'ß', 'A' .. 'Z'];
   TYPE
     WordType = STRING[MaxLengthOfWord];
 PROCEDURE GetWord(VAR FileFrom: TEXT; VAR WordFrom: WordType; VAR Found: BOOLEAN);
 IMPLEMENTATION
   FUNCTION ConvertToLowerCase(VAR Ch: CHAR): CHAR;
   BEGIN       
-    IF (Ch IN ['A' .. 'Z']) 
+    IF (Ch IN AlphabetUpperCase)
     THEN
-      Ch := CHR(ORD(Ch) + ORD('a') - ORD('A'));
-    IF (Ch IN ['À' .. 'ß']) 
-    THEN
-      Ch := CHR(ORD(Ch) + ORD('à') - ORD('À'));
+      Ch := CHR(ORD(Ch) + OrdDifference);   
     IF (Ch = '¨') OR (Ch = '¸')
     THEN
       Ch := 'å';
@@ -32,11 +30,11 @@ IMPLEMENTATION
     DO
       BEGIN
         READ(FileFrom, Ch);
-        IF (Ch IN AlphabetRu) OR (Ch IN AlphabetEn) 
+        IF (Ch IN Alphabet) 
         THEN 
           BEGIN
             Found := TRUE;
-            WHILE NOT EOLN(FileFrom) AND (Ch IN AlphabetRu) OR (Ch IN AlphabetEn) 
+            WHILE NOT EOLN(FileFrom) AND (Ch IN Alphabet) 
             DO
               BEGIN
                 Ch := ConvertToLowerCase(Ch);
